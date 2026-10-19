@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Porsche Mission Flor | Rodas forjadas de alta performance</title>
+<meta name="description" content="Configurador 3D das rodas Mission Flor: Performance 18″ (BMW M4 G82) e Compact 16″ (fitment universal). Alumínio forjado e fibra de carbono.">
+<meta name="theme-color" content="#0A0A0A">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<script type="importmap">
+{ "imports": {
+  "three": "./vendor/three/three.module.min.js",
+  "three/addons/": "./vendor/three/addons/"
+} }
+</script>
+</head>
+<body>
+
+<header class="topbar" id="topbar">
+  <a class="brand" href="#configurador" aria-label="Mission Flor, início">
+    <svg class="mark" viewBox="-20 -20 40 40" aria-hidden="true">
+      <g fill="none" stroke="currentColor" stroke-width="1.4">
+        <ellipse cx="0" cy="-10" rx="4.6" ry="8.2"/>
+        <ellipse cx="0" cy="-10" rx="4.6" ry="8.2" transform="rotate(72)"/>
+        <ellipse cx="0" cy="-10" rx="4.6" ry="8.2" transform="rotate(144)"/>
+        <ellipse cx="0" cy="-10" rx="4.6" ry="8.2" transform="rotate(216)"/>
+        <ellipse cx="0" cy="-10" rx="4.6" ry="8.2" transform="rotate(288)"/>
+      </g>
+      <circle r="3" fill="var(--magenta)"/>
+    </svg>
+    <span class="brand-text"><b>Mission</b> Flor</span>
+  </a>
+  <nav class="nav" aria-label="Principal">
+    <a href="#configurador">Configurador</a>
+    <a href="#engenharia">Engenharia</a>
+    <a href="#compatibilidade">Compatibilidade</a>
+    <a href="#orcamento" class="nav-cta">Orçamento</a>
+  </nav>
+</header>
+
+<main>
+<!-- ============ CONFIGURADOR ============ -->
+<section class="configurator" id="configurador" aria-label="Configurador 3D">
+  <div class="stage" id="stage" data-light="studio">
+    <canvas id="gl" aria-label="Visualizador 3D da roda. Arraste para girar, role para aproximar."></canvas>
+
+    <div class="stage-title">
+      <span class="eyebrow">Configurador 3D</span>
+      <h1>Porsche<br>Mission Flor</h1>
+      <p>Rodas forjadas de alta performance.</p>
+      <div class="hint" id="hint"><span>Arraste para girar</span><span>Role para zoom</span><span>Botão direito para mover</span></div>
+    </div>
+
+    <div class="loader" id="loader" role="status">
+      <div class="loader-bar"><i id="loaderBar"></i></div>
+      <span id="loaderText">Carregando modelo 3D</span>
+    </div>
+    <div class="nogl" id="nogl" hidden>Seu navegador não conseguiu iniciar o WebGL. Atualize o navegador ou ative a aceleração de hardware.</div>
+
+    <div class="readout" id="readout" aria-live="polite"></div>
+
+    <div class="toolbar">
+      <div class="group" role="group" aria-label="Iluminação">
+        <span class="group-label">Luz</span>
+        <div class="seg" id="lightSeg">
+          <button class="is-on" data-light="studio" aria-pressed="true">Studio Light</button>
+          <button data-light="cyber" aria-pressed="false">Dark Cyber</button>
+          <button data-light="sunset" aria-pressed="false">Sunset Gold</button>
+        </div>
+      </div>
+      <div class="group" role="group" aria-label="Opções de visualização">
+        <span class="group-label">Exibir</span>
+        <div class="toggles">
+          <button class="toggle" id="tBrake" aria-pressed="false"><i></i>Freio M-Performance</button>
+          <button class="toggle" id="tCarbon" aria-pressed="false"><i></i>Fibra de carbono</button>
+          <button class="toggle" id="tTire" aria-pressed="false"><i></i>Pneu</button>
+          <button class="toggle" id="tSpin" aria-pressed="false"><i></i>Giro automático</button>
+        </div>
+      </div>
+      <div class="group" role="group" aria-label="Vistas">
+        <span class="group-label">Vista</span>
+        <div class="seg seg-views" id="viewSeg">
+          <button data-view="front">Frontal</button>
+          <button data-view="three">3/4</button>
+          <button data-view="side">Perfil</button>
+          <button data-view="rear">Traseira</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <aside class="panel" id="panel" aria-label="Especificações técnicas">
+    <div class="tabs" role="tablist" aria-label="Modelo">
+      <i class="tab-ind" id="tabInd"></i>
+      <button role="tab" class="tab is-on" id="tab-perf" data-model="perf" aria-selected="true">
+        <span class="tab-size">18<small>″</small></span>
+        <span class="tab-name">Performance</span>
+        <span class="tab-fit">BMW M4 G82</span>
+      </button>
+      <button role="tab" class="tab" id="tab-compact" data-model="compact" aria-selected="false">
+        <span class="tab-size">16<small>″</small></span>
+        <span class="tab-name">Compact</span>
+        <span class="tab-fit">Fitment universal</span>
+      </button>
+    </div>
+
+    <div class="panel-body" id="panelBody">
+      <div class="model-head">
+        <span class="eyebrow" id="mEyebrow"></span>
+        <h2 id="mName"></h2>
+        <p id="mLead"></p>
+      </div>
+
+      <div class="finish" role="group" aria-label="Acabamento">
+        <span class="group-label">Acabamento</span>
+        <div class="swatches" id="swatches">
+          <button class="sw is-on" data-finish="alu" style="--c:#c9ccd1" aria-label="Alumínio natural" aria-pressed="true"><span>Alumínio</span></button>
+          <button class="sw" data-finish="graphite" style="--c:#3b3e44" aria-label="Grafite fosco" aria-pressed="false"><span>Grafite</span></button>
+          <button class="sw" data-finish="bronze" style="--c:#8d6b47" aria-label="Bronze acetinado" aria-pressed="false"><span>Bronze</span></button>
+        </div>
+      </div>
+
+      <dl class="specs" id="specs"></dl>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary" id="btnQuote">Solicitar orçamento sob medida</button>
+      <button class="btn btn-ghost" id="btnPdf"><svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><path d="M10 3v9m0 0-3.5-3.5M10 12l3.5-3.5M4 16h12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Baixar ficha técnica em PDF</button>
+    </div>
+  </aside>
+</section>
+
+<!-- ============ ENGENHARIA ============ -->
+<section class="section" id="engenharia">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Engenharia</span>
+      <h2>Uma flor desenhada em cada raio</h2>
+      <p>O desenho nasce de uma pétala hexagonal repetida em torno do cubo. A face é elevada, a janela tem rampa de 20° e cada raio recebe uma ranhura de alívio antes da abertura junto ao aro.</p>
+    </div>
+
+    <div class="features">
+      <article>
+        <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="none" stroke="currentColor" stroke-width="1"/><circle cx="32" cy="32" r="8" fill="none" stroke="currentColor" stroke-width="1"/><g stroke="currentColor" stroke-width="1"><path d="M32 4v20M32 40v20M4 32h20M40 32h20"/></g></svg>
+        <h3>Alumínio forjado</h3>
+        <p>Face e barril trabalhados a partir de um único bloco forjado. O barril interno tem parede de 4 mm e canal rebaixado para o assentamento do pneu.</p>
+        <span class="chip">Barril de 4 mm</span>
+      </article>
+      <article>
+        <svg viewBox="0 0 64 64" aria-hidden="true"><defs><pattern id="tw" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="8" fill="currentColor" opacity=".55"/></pattern></defs><rect x="8" y="8" width="48" height="48" fill="url(#tw)" stroke="currentColor" stroke-width="1"/></svg>
+        <h3>Fibra de carbono real</h3>
+        <p>Inserções usinadas nas ranhuras dos raios e acabamento no barril interno, em trama twill 2×2 com verniz de alto brilho.</p>
+        <span class="chip">Twill 2×2</span>
+      </article>
+      <article>
+        <svg viewBox="-32 -32 64 64" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1"><ellipse cx="0" cy="-14" rx="7" ry="13"/><ellipse cx="0" cy="-14" rx="7" ry="13" transform="rotate(72)"/><ellipse cx="0" cy="-14" rx="7" ry="13" transform="rotate(144)"/><ellipse cx="0" cy="-14" rx="7" ry="13" transform="rotate(216)"/><ellipse cx="0" cy="-14" rx="7" ry="13" transform="rotate(288)"/></g><circle r="4" fill="var(--magenta)"/></svg>
+        <h3>Calota floral Rosa Magenta</h3>
+        <p>Emblema de cinco pétalas assentado em rebaixo no cubo. É o único ponto de cor da roda, pensado para dialogar com o caliper azul.</p>
+        <span class="chip chip-m">Rosa Magenta</span>
+      </article>
+    </div>
+
+    <div class="numbers">
+      <div><b>9,5J</b><span>Largura da tala, Performance</span></div>
+      <div><b>5×112</b><span>PCD, parafusos M14 cônicos</span></div>
+      <div><b>66,6 mm</b><span>Cubo central, plataforma CLAR</span></div>
+      <div><b>22°</b><span>Ângulo de concavidade da face</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ COMPATIBILIDADE ============ -->
+<section class="section section-alt" id="compatibilidade">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Compatibilidade</span>
+      <h2>Veículos e fitment</h2>
+      <p>A Performance 18″ é dimensionada para a plataforma BMW CLAR. A Compact 16″ tem furação dupla (4×100 e 5×114,3) e cubo de 67,1 mm, que aceita anel de centragem.</p>
+    </div>
+
+    <div class="table-scroll">
+      <table class="compat">
+        <thead>
+          <tr><th>Veículo</th><th>PCD / cubo original</th><th>Performance 18″<small>5×112 · 66,6 mm</small></th><th>Compact 16″<small>4×100 / 5×114,3 · 67,1 mm</small></th></tr>
+        </thead>
+        <tbody>
+          <tr><th>BMW M4 (G82) <em>2021 em diante</em></th><td>5×112 · 66,6</td><td><span class="ok">Direto</span></td><td><span class="no">Não indicado</span></td></tr>
+          <tr><th>BMW M3 (G80) <em>2021 em diante</em></th><td>5×112 · 66,6</td><td><span class="ok">Direto</span></td><td><span class="no">Não indicado</span></td></tr>
+          <tr><th>BMW Série 4 (G22) <em>2020 em diante</em></th><td>5×112 · 66,6</td><td><span class="ok">Direto</span></td><td><span class="no">Não indicado</span></td></tr>
+          <tr><th>BMW Série 3 (G20) <em>2019 em diante</em></th><td>5×112 · 66,6</td><td><span class="ok">Direto</span></td><td><span class="no">Não indicado</span></td></tr>
+          <tr><th>Mercedes-Benz Classe C (W205) <em>2014 a 2021</em></th><td>5×112 · 66,6</td><td><span class="ok">Direto</span></td><td><span class="no">Não indicado</span></td></tr>
+          <tr><th>Audi A4 (B9) <em>2016 em diante</em></th><td>5×112 · 66,5</td><td><span class="ring">Anel 66,6 → 66,5</span></td><td><span class="no">Não indicado</span></td></tr>
+          <tr><th>Volkswagen Golf (Mk7 / Mk8)</th><td>5×112 · 57,1</td><td><span class="ring">Anel 66,6 → 57,1</span></td><td><span class="no">Não indicado</span></td></tr>
+          <tr><th>Honda Civic (10ª geração)</th><td>5×114,3 · 64,1</td><td><span class="no">Não indicado</span></td><td><span class="ring">Anel 67,1 → 64,1</span></td></tr>
+          <tr><th>Toyota Corolla (E210)</th><td>5×114,3 · 60,1</td><td><span class="no">Não indicado</span></td><td><span class="ring">Anel 67,1 → 60,1</span></td></tr>
+          <tr><th>Chevrolet Onix (2ª geração)</th><td>4×100 · 56,6</td><td><span class="no">Não indicado</span></td><td><span class="ring">Anel 67,1 → 56,6</span></td></tr>
+          <tr><th>Mazda MX-5 (ND)</th><td>4×100 · 54,1</td><td><span class="no">Não indicado</span></td><td><span class="ring">Anel 67,1 → 54,1</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul class="legend">
+      <li><span class="ok">Direto</span> centragem pelo cubo, sem anel</li>
+      <li><span class="ring">Anel</span> exige anel de centragem (original → roda)</li>
+      <li><span class="no">Não indicado</span> furação incompatível</li>
+    </ul>
+    <p class="fine">Valores de referência. Offset, folga de freio e medida do pneu variam por versão e eixo (o M4 usa medidas diferentes na frente e atrás). Confirmamos cada aplicação antes de produzir.</p>
+  </div>
+</section>
+
+<!-- ============ ORÇAMENTO ============ -->
+<section class="section" id="orcamento">
+  <div class="wrap quote">
+    <div class="section-head">
+      <span class="eyebrow">Sob medida</span>
+      <h2>Solicite seu orçamento</h2>
+      <p>Informe o veículo e o modelo. Retornamos com offset recomendado, acabamento e prazo de produção.</p>
+      <ul class="contacts">
+        <li><span>E-mail</span><a id="mailLink" href="#"></a></li>
+        <li><span>WhatsApp</span><a id="waLink" href="#" target="_blank" rel="noopener">Abrir conversa</a></li>
+      </ul>
+    </div>
+
+    <form id="quoteForm" class="form" novalidate>
+      <label class="f"><span>Nome</span><input id="qName" name="nome" autocomplete="name" required></label>
+      <label class="f"><span>E-mail ou WhatsApp</span><input id="qContact" name="contato" autocomplete="email" required></label>
+      <label class="f"><span>Veículo e ano</span><input id="qCar" name="veiculo" placeholder="Ex.: BMW M4 Competition 2023" required></label>
+      <label class="f"><span>Modelo</span>
+        <select id="qModel" name="modelo">
+          <option value="perf">Mission Flor Performance 18″ (BMW M4 G82)</option>
+          <option value="compact">Mission Flor Compact 16″ (universal)</option>
+        </select>
+      </label>
+      <label class="f"><span>Acabamento</span>
+        <select id="qFinish" name="acabamento">
+          <option value="alu">Alumínio natural</option>
+          <option value="graphite">Grafite fosco</option>
+          <option value="bronze">Bronze acetinado</option>
+        </select>
+      </label>
+      <label class="f"><span>Quantidade</span>
+        <select id="qQty" name="qtd"><option>4 rodas</option><option>2 rodas (eixo)</option><option>1 roda</option></select>
+      </label>
+      <label class="f f-wide"><span>Observações</span><textarea id="qMsg" name="obs" rows="3" placeholder="Medida do pneu, offset desejado, freio, prazo"></textarea></label>
+      <div class="f-wide form-actions">
+        <button class="btn btn-primary" type="submit">Enviar por e-mail</button>
+        <a class="btn btn-ghost" id="qWa" href="#" target="_blank" rel="noopener">Enviar por WhatsApp</a>
+      </div>
+      <p class="form-status" id="formStatus" role="status"></p>
+    </form>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-brand"><b>Mission</b> Flor</div>
+    <p>Imagens geradas a partir dos modelos CAD de projeto. Cores e acabamentos são representações e podem variar na peça final.</p>
+    <p>BMW, M4, G82 e Porsche são marcas de seus respectivos proprietários, citadas apenas para indicar compatibilidade e inspiração de desenho. Sem afiliação.</p>
+  </div>
+</footer>
+
+<script type="module" src="assets/app.js"></script>
+</body>
+</html>
